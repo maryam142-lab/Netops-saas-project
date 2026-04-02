@@ -13,7 +13,6 @@
       "use": "@vercel/node"
     }
   ],
-  "outputDirectory": "client/dist",
   "crons": [
     {
       "path": "/api/cron/monthly-billing",

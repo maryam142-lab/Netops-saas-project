@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Loader from '../../components/ui/Loader';
@@ -57,7 +57,8 @@ const Profile = () => {
     };
   }, []);
 
-  const activeConnection = connections.find((connection) => connection.status === 'active');
+  const safeConnections = Array.isArray(connections) ? connections : [];
+  const activeConnection = safeConnections.find((connection) => connection.status === 'active');
 
   const billingSummary = useMemo(() => {
     const totalPaid = bills
@@ -140,6 +141,7 @@ const Profile = () => {
                 value={profile?.name || ''}
                 onChange={handleProfileChange}
                 className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2"
+                autoComplete="name"
               />
             </label>
             <label className="block">
@@ -150,6 +152,7 @@ const Profile = () => {
                 value={profile?.email || ''}
                 onChange={handleProfileChange}
                 className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2"
+                autoComplete="email"
               />
             </label>
             <label className="block">
@@ -159,6 +162,7 @@ const Profile = () => {
                 value={profile?.phone || ''}
                 onChange={handleProfileChange}
                 className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2"
+                autoComplete="tel"
               />
             </label>
             <label className="block">
@@ -168,6 +172,7 @@ const Profile = () => {
                 value={profile?.address || ''}
                 onChange={handleProfileChange}
                 className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2"
+                autoComplete="street-address"
               />
             </label>
           </div>
@@ -191,6 +196,7 @@ const Profile = () => {
                   }))
                 }
                 className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2"
+                autoComplete="current-password"
               />
             </label>
             <label className="block">
@@ -202,6 +208,7 @@ const Profile = () => {
                   setPasswordForm((prev) => ({ ...prev, newPassword: event.target.value }))
                 }
                 className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2"
+                autoComplete="new-password"
               />
             </label>
           </div>
@@ -215,17 +222,17 @@ const Profile = () => {
           <div className="mt-4 space-y-2 text-sm text-gray-600">
             <p>
               <span className="font-semibold">Package:</span>{' '}
-              {activeConnection?.packageId?.name || '—'}
+              {activeConnection?.packageId?.name || 'â€”'}
             </p>
             <p>
               <span className="font-semibold">Status:</span>{' '}
-              {activeConnection?.status || connections[0]?.status || '—'}
+              {activeConnection?.status || safeConnections[0]?.status || 'â€”'}
             </p>
             <p>
               <span className="font-semibold">Connection Date:</span>{' '}
               {activeConnection?.installDate
                 ? new Date(activeConnection.installDate).toLocaleDateString()
-                : '—'}
+                : 'â€”'}
             </p>
           </div>
         </Card>
@@ -253,3 +260,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

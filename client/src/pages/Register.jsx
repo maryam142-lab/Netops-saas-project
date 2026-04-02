@@ -35,6 +35,9 @@ const Register = () => {
       const data = await registerUser(form);
       localStorage.setItem('token', data.token);
       localStorage.setItem('role', data.user.role);
+      if (data.user?.tenantId) {
+        localStorage.setItem('tenantId', data.user.tenantId);
+      }
       setStatus(`Account created for ${data.user.name}`);
       if (data.user.role === 'admin') {
         navigate('/admin/dashboard', { replace: true });
@@ -42,7 +45,7 @@ const Register = () => {
         navigate('/customer/dashboard', { replace: true });
       }
     } catch (err) {
-      setError('Unable to create account.');
+      setError(err?.response?.data?.message || 'Unable to create account.');
       setStatus('');
     }
   };
@@ -63,6 +66,7 @@ const Register = () => {
               value={form.name}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-4 py-2 text-gray-900"
+              autoComplete="name"
               required
             />
           </label>
@@ -74,6 +78,7 @@ const Register = () => {
               value={form.email}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-4 py-2 text-gray-900"
+              autoComplete="email"
               required
             />
           </label>
@@ -85,6 +90,7 @@ const Register = () => {
               value={form.password}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-4 py-2 text-gray-900"
+              autoComplete="new-password"
               required
             />
           </label>
@@ -96,6 +102,7 @@ const Register = () => {
               value={form.phone}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-4 py-2 text-gray-900"
+              autoComplete="tel"
             />
           </label>
           <label className="block text-sm text-gray-600">
@@ -106,6 +113,7 @@ const Register = () => {
               value={form.address}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-4 py-2 text-gray-900"
+              autoComplete="street-address"
             />
           </label>
           <label className="block text-sm text-gray-600">

@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "client/dist"
+      }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/monthly-billing",
+      "schedule": "0 0 1 * *"
+    }
+  ],
+  "routes": [
+    { "src": "/api/auth/(.*)", "dest": "/api/auth.js" },
+    { "src": "/api/auth", "dest": "/api/auth.js" },
+    { "src": "/api/customers/(.*)", "dest": "/api/customers.js" },
+    { "src": "/api/customers", "dest": "/api/customers.js" },
+    { "src": "/api/customer/(.*)", "dest": "/api/customers.js" },
+    { "src": "/api/customer", "dest": "/api/customers.js" },
+    { "src": "/api/packages/(.*)", "dest": "/api/packages.js" },
+    { "src": "/api/packages", "dest": "/api/packages.js" },
+    { "src": "/api/bills/(.*)", "dest": "/api/bills.js" },
+    { "src": "/api/bills", "dest": "/api/bills.js" },
+    { "src": "/api/cron/monthly-billing", "dest": "/api/cron/monthly-billing.js" },
+    { "src": "/api/(.*)", "dest": "/api/index.js" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}

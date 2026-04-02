@@ -1,4 +1,5 @@
 const SupportTicket = require('../models/SupportTicket');
+const { requireTenantId, withTenant, ensureTenantInPayload } = require('../utils/tenant');
 
 const createTicket = async (req, res) => {
   try {
@@ -9,12 +10,15 @@ const createTicket = async (req, res) => {
         .json({ success: false, message: 'Subject and message are required' });
     }
 
-    const ticket = await SupportTicket.create({
-      customerId: req.user._id,
-      subject,
-      message,
-      status: 'open',
-    });
+    const tenantId = requireTenantId(req.context?.tenantId);
+    const ticket = await SupportTicket.create(
+      ensureTenantInPayload(tenantId, {
+        customerId: req.user._id,
+        subject,
+        message,
+        status: 'open',
+      })
+    );
 
     return res.status(201).json(ticket);
   } catch (err) {
@@ -24,7 +28,10 @@ const createTicket = async (req, res) => {
 
 const listMyTickets = async (req, res) => {
   try {
-    const tickets = await SupportTicket.find({ customerId: req.user._id }).sort({
+    const tenantId = requireTenantId(req.context?.tenantId);
+    const tickets = await SupportTicket.find(
+      withTenant(tenantId, { customerId: req.user._id })
+    ).sort({
       createdAt: -1,
     });
     return res.json(tickets);
@@ -42,10 +49,13 @@ const replyToTicket = async (req, res) => {
         .json({ success: false, message: 'ticketId and message are required' });
     }
 
-    const ticket = await SupportTicket.findOne({
-      _id: ticketId,
-      customerId: req.user._id,
-    });
+    const tenantId = requireTenantId(req.context?.tenantId);
+    const ticket = await SupportTicket.findOne(
+      withTenant(tenantId, {
+        _id: ticketId,
+        customerId: req.user._id,
+      })
+    );
     if (!ticket) {
       return res.status(404).json({ success: false, message: 'Ticket not found' });
     }
@@ -64,7 +74,8 @@ const replyToTicket = async (req, res) => {
 
 const listAllTickets = async (req, res) => {
   try {
-    const tickets = await SupportTicket.find()
+    const tenantId = requireTenantId(req.context?.tenantId);
+    const tickets = await SupportTicket.find(withTenant(tenantId))
       .populate('customerId', 'name email')
       .sort({ createdAt: -1 });
     return res.json(tickets);
@@ -76,7 +87,8 @@ const listAllTickets = async (req, res) => {
 const getTicketById = async (req, res) => {
   try {
     const { ticketId } = req.params;
-    const ticket = await SupportTicket.findById(ticketId).populate(
+    const tenantId = requireTenantId(req.context?.tenantId);
+    const ticket = await SupportTicket.findOne(withTenant(tenantId, { _id: ticketId })).populate(
       'customerId',
       'name email'
     );
@@ -97,7 +109,8 @@ const replyToTicketAdmin = async (req, res) => {
       return res.status(400).json({ success: false, message: 'message is required' });
     }
 
-    const ticket = await SupportTicket.findById(ticketId);
+    const tenantId = requireTenantId(req.context?.tenantId);
+    const ticket = await SupportTicket.findOne(withTenant(tenantId, { _id: ticketId }));
     if (!ticket) {
       return res.status(404).json({ success: false, message: 'Ticket not found' });
     }
@@ -115,7 +128,8 @@ const replyToTicketAdmin = async (req, res) => {
 const closeTicket = async (req, res) => {
   try {
     const { ticketId } = req.params;
-    const ticket = await SupportTicket.findById(ticketId);
+    const tenantId = requireTenantId(req.context?.tenantId);
+    const ticket = await SupportTicket.findOne(withTenant(tenantId, { _id: ticketId }));
     if (!ticket) {
       return res.status(404).json({ success: false, message: 'Ticket not found' });
     }

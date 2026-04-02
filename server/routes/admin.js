@@ -10,16 +10,17 @@ const {
 } = require('../controllers/adminController');
 const { listAllTickets } = require('../controllers/supportController');
 const { protect, isAdmin } = require('../middleware/auth');
+const asyncHandler = require('../utils/asyncHandler');
 
 router.use(protect, isAdmin);
 
-router.get('/customers', listCustomers);
-router.post('/customers', createCustomer);
-router.put('/customers/:id', updateCustomer);
-router.delete('/customers/:id', deleteCustomer);
-router.get('/revenue-summary', revenueSummary);
-router.get('/support', listAllTickets);
-router.get('/settings', getSettings);
-router.put('/settings', updateSettings);
+router.get('/customers', asyncHandler(listCustomers));
+router.post('/customers', asyncHandler(createCustomer));
+router.put('/customers/:id', asyncHandler(updateCustomer));
+router.delete('/customers/:id', asyncHandler(deleteCustomer));
+router.get('/revenue-summary', asyncHandler(revenueSummary));
+router.get('/support', asyncHandler(listAllTickets));
+router.get('/settings', asyncHandler(getSettings));
+router.put('/settings', asyncHandler(updateSettings));
 
 module.exports = router;

@@ -21,8 +21,11 @@ const adminSettingsSchema = new mongoose.Schema(
     systemSettings: {
       maintenanceMode: { type: Boolean, default: false },
     },
+    tenantId: { type: String, trim: true, required: true },
   },
   { timestamps: true }
 );
+
+adminSettingsSchema.index({ tenantId: 1 }, { unique: true });
 
 module.exports = mongoose.model('AdminSettings', adminSettingsSchema);

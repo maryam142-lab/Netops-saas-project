@@ -10,7 +10,8 @@ const seedAdmin = async () => {
   try {
     await connectDB();
 
-    const existingAdmin = await User.findOne({ role: 'admin' });
+    const tenantId = process.env.SEED_TENANT_ID || 'default';
+    const existingAdmin = await User.findOne({ role: 'admin', tenantId });
     if (existingAdmin) {
       console.log('Admin already exists');
       return;
@@ -22,6 +23,7 @@ const seedAdmin = async () => {
       email: 'admin@netops.com',
       password: hashedPassword,
       role: 'admin',
+      tenantId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });

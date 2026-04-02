@@ -50,6 +50,7 @@ const NewCustomer = () => {
               value={form.name}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="name"
               required
             />
           </label>
@@ -61,6 +62,7 @@ const NewCustomer = () => {
               value={form.email}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="email"
               required
             />
           </label>
@@ -72,6 +74,7 @@ const NewCustomer = () => {
               value={form.password}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="new-password"
               required
             />
           </label>
@@ -82,6 +85,7 @@ const NewCustomer = () => {
               value={form.phone}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="tel"
             />
           </label>
           <label className="text-sm text-gray-600 md:col-span-2">
@@ -91,6 +95,7 @@ const NewCustomer = () => {
               value={form.address}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="street-address"
             />
           </label>
           {error ? (

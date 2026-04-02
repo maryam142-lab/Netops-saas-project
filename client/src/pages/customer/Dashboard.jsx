@@ -39,13 +39,15 @@ const Dashboard = () => {
     };
   }, []);
 
-  const activeConnection = connections.find((connection) => connection.status === 'active');
-  const pendingBills = bills.filter((bill) => bill.status === 'unpaid');
+  const safeConnections = Array.isArray(connections) ? connections : [];
+  const safeBills = Array.isArray(bills) ? bills : [];
+  const activeConnection = safeConnections.find((connection) => connection.status === 'active');
+  const pendingBills = safeBills.filter((bill) => bill.status === 'unpaid');
 
   const stats = [
     {
       title: 'Connection Status',
-      value: activeConnection ? 'Active' : connections[0]?.status || 'No connection',
+      value: activeConnection ? 'Active' : safeConnections[0]?.status || 'No connection',
       subtitle: activeConnection ? 'Uptime 99.9%' : 'Awaiting activation',
     },
     {
@@ -95,14 +97,14 @@ const Dashboard = () => {
 
   const data = useMemo(
     () =>
-      bills.map((bill) => ({
+      safeBills.map((bill) => ({
         id: bill._id,
         month: bill.month,
         amount: `$${Number(bill.amount || 0).toLocaleString()}`,
         status: bill.status === 'paid' ? 'Paid' : 'Unpaid',
         rawStatus: bill.status,
       })),
-    [bills]
+    [safeBills]
   );
 
   const handlePay = async (billId) => {

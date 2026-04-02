@@ -41,6 +41,11 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  const tenantId =
+    localStorage.getItem('tenantId') ||
+    import.meta.env.VITE_TENANT_ID ||
+    'default_tenant';
+  config.headers['x-tenant-id'] = tenantId;
   const role = localStorage.getItem('role');
   const path = resolvePath(config);
   const blockMessage = getRoleBlockMessage(role, path);

@@ -28,6 +28,9 @@ const Login = () => {
       const data = await loginUser(form);
       localStorage.setItem('token', data.token);
       localStorage.setItem('role', data.user.role);
+      if (data.user?.tenantId) {
+        localStorage.setItem('tenantId', data.user.tenantId);
+      }
       setStatus(`Welcome back, ${data.user.name}`);
       if (data.user.role === 'admin') {
         navigate('/admin/dashboard', { replace: true });
@@ -35,7 +38,7 @@ const Login = () => {
         navigate('/customer/dashboard', { replace: true });
       }
     } catch (err) {
-      setError('Unable to sign in with those credentials.');
+      setError(err?.response?.data?.message || 'Unable to sign in with those credentials.');
       setStatus('');
     }
   };
@@ -56,6 +59,7 @@ const Login = () => {
               value={form.email}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-4 py-2 text-gray-900"
+              autoComplete="username"
               required
             />
           </label>
@@ -67,6 +71,7 @@ const Login = () => {
               value={form.password}
               onChange={handleChange}
               className="mt-2 w-full rounded-lg border border-gray-200 px-4 py-2 text-gray-900"
+              autoComplete="current-password"
               required
             />
           </label>

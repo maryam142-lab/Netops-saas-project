@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const cron = require('node-cron');
 const { generateMonthlyBills } = require('./services/billingService');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
+const mongoose = require('mongoose');
 
 dotenv.config();
 
@@ -15,6 +16,24 @@ app.use(errorHandler);
 const start = async () => {
   try {
     await connectDB();
+    try {
+      const indexes = await mongoose.connection.db.collection('users').indexes();
+      const hasEmailOnlyUnique = indexes.some(
+        (index) =>
+          index?.unique &&
+          index?.key &&
+          index.key.email === 1 &&
+          Object.keys(index.key).length === 1
+      );
+      if (hasEmailOnlyUnique) {
+        console.warn(
+          'Warning: users collection has a unique index on email only. ' +
+            'Drop email_1 and create a compound unique index on { tenantId: 1, email: 1 }.'
+        );
+      }
+    } catch (indexErr) {
+      console.warn('Unable to inspect users indexes:', indexErr?.message || indexErr);
+    }
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

@@ -157,6 +157,7 @@ const Customers = () => {
               value={form.name}
               onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="name"
             />
           </label>
           <label className="block text-sm text-gray-600">
@@ -166,6 +167,7 @@ const Customers = () => {
               value={form.email}
               onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="email"
             />
           </label>
           <label className="block text-sm text-gray-600">
@@ -175,6 +177,7 @@ const Customers = () => {
               value={form.phone}
               onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="tel"
             />
           </label>
           <label className="block text-sm text-gray-600">
@@ -184,6 +187,7 @@ const Customers = () => {
               value={form.address}
               onChange={(event) => setForm((prev) => ({ ...prev, address: event.target.value }))}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="street-address"
             />
           </label>
           <label className="block text-sm text-gray-600">
@@ -193,6 +197,7 @@ const Customers = () => {
               value={form.password}
               onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
               className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              autoComplete="new-password"
             />
           </label>
           <div className="flex items-center justify-end gap-2">

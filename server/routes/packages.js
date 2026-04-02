@@ -6,12 +6,13 @@ const {
   deletePackage,
 } = require('../controllers/packageController');
 const { protect, isAdmin } = require('../middleware/auth');
+const asyncHandler = require('../utils/asyncHandler');
 
 router.use(protect, isAdmin);
 
-router.get('/', listPackages);
-router.post('/', createPackage);
-router.put('/:id', updatePackage);
-router.delete('/:id', deletePackage);
+router.get('/', asyncHandler(listPackages));
+router.post('/', asyncHandler(createPackage));
+router.put('/:id', asyncHandler(updatePackage));
+router.delete('/:id', asyncHandler(deletePackage));
 
 module.exports = router;

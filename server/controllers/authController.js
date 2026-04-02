@@ -1,92 +1,38 @@
-﻿const User = require('../models/User');
-const { signToken } = require('../utils/token');
+const authService = require('../services/authService');
+const { sendSuccess } = require('../utils/response');
+const { logger } = require('../utils/logger');
 
 const register = async (req, res) => {
-  try {
-    const { name, email, password, role, phone, address } = req.body;
+  const email = (req.body?.email || '').trim().toLowerCase();
+  const fallbackTenantId = process.env.DEFAULT_TENANT_ID || 'default_tenant';
+  const tenantId =
+    req.context?.tenantId || req.tenantId || req.body?.tenantId || fallbackTenantId;
 
-    if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Name, email, and password are required' });
-    }
+  console.log('EMAIL:', email);
+  console.log('TENANT_ID:', tenantId);
+  console.log('REGISTER INPUT:', { email, tenantId });
 
-    const existing = await User.findOne({ email: email.toLowerCase() });
-    if (existing) {
-      return res.status(409).json({ success: false, message: 'Email already in use' });
-    }
+  logger.info('Auth register request', {
+    requestId: req.context?.requestId || null,
+    email,
+    tenantId,
+  });
 
-    const user = await User.create({
-      name,
-      email,
-      password,
-      role: role || 'customer',
-      phone,
-      address,
-    });
+  req.context = req.context || {};
+  req.context.tenantId = tenantId;
+  req.tenantId = tenantId;
 
-    const token = signToken(user);
-    return res.status(201).json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone,
-        address: user.address,
-        createdAt: user.createdAt,
-      },
-    });
-  } catch (err) {
-    if (err && err.code === 11000) {
-      return res.status(409).json({ success: false, message: 'Email already in use' });
-    }
-    console.error('Register error:', err);
-    return res.status(500).json({ success: false, message: 'Registration failed' });
-  }
+  const result = await authService.registerUser(req.body, req.context);
+  return sendSuccess(res, result, 'Registration successful', 201);
 };
 
 const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Email and password are required' });
-    }
-
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
-    if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
-
-    const match = await user.comparePassword(password);
-    if (!match) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
-
-    const token = signToken(user);
-    return res.json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone,
-        address: user.address,
-        createdAt: user.createdAt,
-      },
-    });
-  } catch (err) {
-    console.error('Login error:', err);
-    return res.status(500).json({ success: false, message: 'Login failed' });
-  }
+  const result = await authService.loginUser(req.body, req.context);
+  return sendSuccess(res, result, 'Login successful');
 };
 
 const profile = async (req, res) => {
-  return res.json({ user: req.user });
+  return sendSuccess(res, { user: req.user }, 'Profile loaded');
 };
 
 module.exports = { register, login, profile };

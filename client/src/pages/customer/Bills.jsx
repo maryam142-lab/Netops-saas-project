@@ -21,10 +21,10 @@ const Bills = () => {
       try {
         const data = await getCustomerBills();
         if (!isMounted) return;
-        setBills(data);
+        setBills(Array.isArray(data) ? data : []);
       } catch (err) {
         if (!isMounted) return;
-        setError('Unable to load bills.');
+        setError(err?.response?.data?.message || 'Unable to load bills.');
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -54,16 +54,17 @@ const Bills = () => {
     },
   ];
 
+  const safeBills = Array.isArray(bills) ? bills : [];
   const data = useMemo(
     () =>
-      bills.map((bill) => ({
+      safeBills.map((bill) => ({
         id: bill._id,
         month: bill.month,
         amount: `$${Number(bill.amount || 0).toLocaleString()}`,
         status: bill.status === 'paid' ? 'Paid' : 'Unpaid',
         rawStatus: bill.status,
       })),
-    [bills]
+    [safeBills]
   );
 
   const handlePay = async (billId) => {
@@ -89,9 +90,9 @@ const Bills = () => {
     try {
       await payAllBills();
       const data = await getCustomerBills();
-      setBills(data);
+      setBills(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError('Failed to pay all due bills.');
+      setError(err?.response?.data?.message || 'Failed to pay all due bills.');
     } finally {
       setPayingAll(false);
     }

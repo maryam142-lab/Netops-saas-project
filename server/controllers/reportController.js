@@ -3,6 +3,7 @@ const PDFDocument = require('pdfkit');
 const User = require('../models/User');
 const Payment = require('../models/Payment');
 const Connection = require('../models/Connection');
+const { requireTenantId } = require('../utils/tenant');
 
 const sendAsCsv = (res, filename, rows) => {
   const parser = new Parser();
@@ -37,8 +38,9 @@ const formatMonth = (value) => {
 const customerGrowthReport = async (req, res) => {
   try {
     const format = (req.query.format || 'json').toLowerCase();
+    const tenantId = requireTenantId(req.context?.tenantId);
     const data = await User.aggregate([
-      { $match: { role: 'customer' } },
+      { $match: { role: 'customer', tenantId } },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
@@ -65,7 +67,9 @@ const customerGrowthReport = async (req, res) => {
 const monthlyRevenueReport = async (req, res) => {
   try {
     const format = (req.query.format || 'json').toLowerCase();
+    const tenantId = requireTenantId(req.context?.tenantId);
     const data = await Payment.aggregate([
+      { $match: { tenantId } },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m', date: '$paymentDate' } },
@@ -95,7 +99,9 @@ const topPackagesReport = async (req, res) => {
   try {
     const format = (req.query.format || 'json').toLowerCase();
     const limit = Math.max(Number(req.query.limit) || 5, 1);
+    const tenantId = requireTenantId(req.context?.tenantId);
     const data = await Connection.aggregate([
+      { $match: { tenantId } },
       {
         $group: {
           _id: '$packageId',

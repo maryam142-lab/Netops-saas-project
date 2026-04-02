@@ -45,8 +45,11 @@ const Connections = () => {
     };
   }, []);
 
+  const safeConnections = Array.isArray(connections) ? connections : [];
+  const safePackages = Array.isArray(packages) ? packages : [];
+
   const openUpgradeModal = async () => {
-    const activeConnection = connections.find((connection) => connection.status === 'active');
+    const activeConnection = safeConnections.find((connection) => connection.status === 'active');
     if (!activeConnection) {
       setError('Active connection not found. Request a connection first.');
       return;
@@ -97,7 +100,7 @@ const Connections = () => {
     { key: 'installDate', header: 'Install Date' },
   ];
 
-  const data = connections.map((connection) => ({
+  const data = safeConnections.map((connection) => ({
     id: connection._id,
     package: connection.packageId?.name || 'Unknown',
     speed: connection.packageId?.speed || '--',
@@ -127,7 +130,7 @@ const Connections = () => {
         <Card className="border border-red-100 bg-red-50 text-red-700">{error}</Card>
       ) : null}
       {loading ? <Loader label="Loading connections..." /> : null}
-      {connections.length === 0 ? (
+      {safeConnections.length === 0 ? (
         <Card className="text-sm text-gray-600">
           No connections found. Please request a connection first.
           <div className="mt-3">
@@ -155,7 +158,7 @@ const Connections = () => {
                 className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
               >
                 <option value="">Choose a package</option>
-                {packages.map((pkg) => (
+                {safePackages.map((pkg) => (
                   <option key={pkg._id} value={pkg._id}>
                     {pkg.name} - {pkg.speed} - ${pkg.price}
                   </option>

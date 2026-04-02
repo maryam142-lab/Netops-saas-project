@@ -1,6 +1,7 @@
 const Stripe = require('stripe');
 const Bill = require('../models/Bill');
 const Payment = require('../models/Payment');
+const { requireTenantId, withTenant, ensureTenantInPayload } = require('../utils/tenant');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2024-06-20',
@@ -13,7 +14,11 @@ const createCheckoutSession = async (req, res) => {
       return res.status(400).json({ success: false, message: 'billId is required' });
     }
 
-    const bill = await Bill.findById(billId).populate('customerId', 'name email');
+    const tenantId = requireTenantId(req.context?.tenantId);
+    const bill = await Bill.findOne(withTenant(tenantId, { _id: billId })).populate(
+      'customerId',
+      'name email'
+    );
     if (!bill) {
       return res.status(404).json({ success: false, message: 'Bill not found' });
     }
@@ -59,6 +64,7 @@ const createCheckoutSession = async (req, res) => {
       metadata: {
         billId: String(bill._id),
         customerId: String(bill.customerId?._id || bill.customerId),
+        tenantId,
       },
       customer_email: bill.customerId?.email,
     });
@@ -92,26 +98,33 @@ const stripeWebhook = async (req, res) => {
 
     if (billId) {
       try {
-        const bill = await Bill.findById(billId);
-        if (bill && bill.status !== 'paid') {
-          bill.status = 'paid';
-          await bill.save();
-        }
+    const tenantId = session.metadata?.tenantId;
+    if (!tenantId) {
+      return res.json({ received: true });
+    }
 
-        const existingPayment = await Payment.findOne({
-          stripeSessionId: session.id,
-        });
+    const bill = await Bill.findOne(withTenant(tenantId, { _id: billId }));
+    if (bill && bill.status !== 'paid') {
+      bill.status = 'paid';
+      await bill.save();
+    }
+
+    const existingPayment = await Payment.findOne(
+      withTenant(tenantId, { stripeSessionId: session.id })
+    );
 
         if (!existingPayment && bill) {
           const amount = session.amount_total ? session.amount_total / 100 : bill.amount;
-          await Payment.create({
-            billId: bill._id,
-            amount,
-            method: 'stripe',
-            paymentDate: session.created ? new Date(session.created * 1000) : new Date(),
-            stripeSessionId: session.id,
-            stripePaymentIntentId: session.payment_intent,
-          });
+      await Payment.create(
+        ensureTenantInPayload(tenantId, {
+          billId: bill._id,
+          amount,
+          method: 'stripe',
+          paymentDate: session.created ? new Date(session.created * 1000) : new Date(),
+          stripeSessionId: session.id,
+          stripePaymentIntentId: session.payment_intent,
+        })
+      );
         }
       } catch (err) {
         // Allow Stripe to stop retrying once we acknowledge the event.

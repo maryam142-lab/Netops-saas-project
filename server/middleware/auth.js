@@ -1,5 +1,6 @@
-﻿const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { sendError } = require('../utils/response');
 
 const protect = async (req, res, next) => {
   try {
@@ -9,34 +10,53 @@ const protect = async (req, res, next) => {
       : null;
 
     if (!token) {
-      return res.status(401).json({ message: 'Not authorized' });
+      return sendError(res, 'Not authorized', 401);
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId).select('-password');
+    const tenantId = decoded.tenantId;
+    const user = await User.findOne({ _id: decoded.userId, tenantId }).select('-password');
     if (!user) {
-      return res.status(401).json({ message: 'Not authorized' });
+      return sendError(res, 'Not authorized', 401);
     }
 
     req.user = user;
+    req.tenantId = user.tenantId || decoded.tenantId || '';
+    req.context = req.context || {};
+    req.context.tenantId = req.tenantId;
+    req.context.userId = String(user._id);
     return next();
   } catch (err) {
-    return res.status(401).json({ message: 'Not authorized' });
+    if (err && err.name === 'TokenExpiredError') {
+      return sendError(res, 'Token expired', 401);
+    }
+    return sendError(res, 'Not authorized', 401);
   }
 };
 
-const isAdmin = (req, res, next) => {
-  if (req.user?.role !== 'admin') {
-    return res.status(403).json({ message: 'Admin access required' });
-  }
-  return next();
-};
-
-const isCustomer = (req, res, next) => {
-  if (req.user?.role !== 'customer') {
-    return res.status(403).json({ message: 'Customer access required' });
+const authorizeRoles = (...roles) => (req, res, next) => {
+  if (!req.user || !roles.includes(req.user.role)) {
+    return sendError(res, 'Insufficient permissions', 403);
   }
   return next();
 };
 
-module.exports = { protect, isAdmin, isCustomer };
+const requireTenant = (req, res, next) => {
+  const requestedTenant =
+    req.params?.tenantId || req.headers['x-tenant-id'] || req.body?.tenantId || '';
+
+  if (!requestedTenant) {
+    return sendError(res, 'Tenant ID is required', 400);
+  }
+
+  if (!req.tenantId || req.tenantId !== requestedTenant) {
+    return sendError(res, 'Tenant access denied', 403);
+  }
+
+  return next();
+};
+
+const isAdmin = authorizeRoles('admin');
+const isCustomer = authorizeRoles('customer');
+
+module.exports = { protect, authorizeRoles, requireTenant, isAdmin, isCustomer };

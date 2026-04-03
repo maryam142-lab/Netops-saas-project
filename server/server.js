@@ -34,7 +34,7 @@ const start = async () => {
     } catch (indexErr) {
       console.warn('Unable to inspect users indexes:', indexErr?.message || indexErr);
     }
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
 
@@ -46,10 +46,16 @@ const start = async () => {
         console.error('Monthly billing job failed:', err);
       }
     });
+
+    return server;
   } catch (err) {
     console.error('Failed to start server', err);
     process.exit(1);
   }
 };
 
-start();
+if (require.main === module) {
+  start();
+}
+
+module.exports = { app, start };

@@ -19,20 +19,9 @@
       "schedule": "0 0 1 * *"
     }
   ],
-  "routes": [
-    { "src": "/api/auth/(.*)", "dest": "/api/auth.js" },
-    { "src": "/api/auth", "dest": "/api/auth.js" },
-    { "src": "/api/customers/(.*)", "dest": "/api/customers.js" },
-    { "src": "/api/customers", "dest": "/api/customers.js" },
-    { "src": "/api/customer/(.*)", "dest": "/api/customers.js" },
-    { "src": "/api/customer", "dest": "/api/customers.js" },
-    { "src": "/api/packages/(.*)", "dest": "/api/packages.js" },
-    { "src": "/api/packages", "dest": "/api/packages.js" },
-    { "src": "/api/bills/(.*)", "dest": "/api/bills.js" },
-    { "src": "/api/bills", "dest": "/api/bills.js" },
-    { "src": "/api/cron/monthly-billing", "dest": "/api/cron/monthly-billing.js" },
-    { "src": "/api/(.*)", "dest": "/api/index.js" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/cron/monthly-billing", "destination": "/api/cron/monthly-billing.js" },
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

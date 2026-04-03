@@ -15,8 +15,11 @@ const ensureDb = async () => {
   }
 };
 
-app.use(notFound);
-app.use(errorHandler);
+if (!app.locals._vercelConfigured) {
+  app.use(notFound);
+  app.use(errorHandler);
+  app.locals._vercelConfigured = true;
+}
 
 module.exports = async (req, res) => {
   await ensureDb();

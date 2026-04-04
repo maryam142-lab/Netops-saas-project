@@ -47,28 +47,80 @@ html.dark body {
     radial-gradient(circle at 50% 100%, rgba(15, 23, 42, 0.35), transparent 55%);
 }
 
-@layer base {
-  html {
-    @apply antialiased;
-  }
-
-  input,
-  select,
-  textarea {
-    @apply w-full rounded-xl border border-slate-200 bg-white/90 px-4 py-2 text-sm text-slate-900 shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100/70 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:focus:border-brand-400 dark:focus:ring-brand-900/40;
-  }
-
-  label {
-    @apply text-sm font-medium text-slate-600 dark:text-slate-300;
-  }
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer components {
-  .surface-card {
-    @apply rounded-2xl border border-slate-200/70 bg-white/85 shadow-lg shadow-slate-200/40 backdrop-blur dark:border-slate-800/80 dark:bg-slate-900/70 dark:shadow-slate-950/40;
-  }
+input,
+select,
+textarea {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
 
-  .surface-panel {
-    @apply rounded-2xl border border-slate-200/70 bg-white/95 shadow-md shadow-slate-200/40 dark:border-slate-800/70 dark:bg-slate-900/80;
-  }
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #1f8fff;
+  box-shadow: 0 0 0 4px rgba(31, 143, 255, 0.18);
+}
+
+label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  border-color: #334155;
+  background-color: rgba(15, 23, 42, 0.6);
+  color: #e2e8f0;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.45);
+}
+
+.dark label {
+  color: #cbd5f5;
+}
+
+.surface-card {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 18px 40px rgba(148, 163, 184, 0.35);
+  backdrop-filter: blur(14px);
+}
+
+.dark .surface-card {
+  border-color: rgba(51, 65, 85, 0.8);
+  background-color: rgba(15, 23, 42, 0.7);
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.35);
+}
+
+.surface-panel {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 12px 28px rgba(148, 163, 184, 0.25);
+}
+
+.dark .surface-panel {
+  border-color: rgba(51, 65, 85, 0.7);
+  background-color: rgba(15, 23, 42, 0.8);
 }

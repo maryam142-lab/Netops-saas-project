@@ -38,19 +38,20 @@ const Sidebar = ({ navItems, brand, roleLabel, onLogout, open, onClose }) => {
         role="presentation"
       />
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 -translate-x-full transform bg-gray-900 p-6 text-white transition-transform lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 -translate-x-full transform border-r border-white/10 bg-slate-950/95 p-6 text-white shadow-2xl shadow-slate-950/40 backdrop-blur transition-transform lg:static lg:translate-x-0 overflow-y-auto ${
           open ? 'translate-x-0' : ''
         }`}
       >
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">{brand}</h1>
+        <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-4">
+          <p className="text-xs uppercase tracking-[0.35em] text-slate-400">Workspace</p>
+          <h1 className="mt-2 text-2xl font-semibold text-white">{brand}</h1>
           {roleLabel ? (
-            <p className="mt-1 text-xs uppercase tracking-[0.3em] text-gray-400">
+            <p className="mt-2 text-xs uppercase tracking-[0.3em] text-slate-500">
               {roleLabel}
             </p>
           ) : null}
         </div>
-        <nav className="space-y-2">
+        <nav className="space-y-1.5">
           {navItems.map((item) => {
             const Icon = iconMap[item.label] || HomeIcon;
             if (item.type === 'button') {
@@ -59,7 +60,7 @@ const Sidebar = ({ navItems, brand, roleLabel, onLogout, open, onClose }) => {
                   key={item.label}
                   type="button"
                   onClick={item.onClick || onLogout}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-200 transition hover:bg-gray-800 hover:text-white"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white"
                 >
                   <Icon className="h-5 w-5" />
                   {item.label}
@@ -71,10 +72,10 @@ const Sidebar = ({ navItems, brand, roleLabel, onLogout, open, onClose }) => {
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                  `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                     isActive
-                      ? 'bg-gray-800 text-white'
-                      : 'text-gray-200 hover:bg-gray-800 hover:text-white'
+                      ? 'bg-white/15 text-white shadow-sm shadow-slate-950/30'
+                      : 'text-slate-200 hover:bg-white/10 hover:text-white'
                   }`
                 }
                 onClick={onClose}

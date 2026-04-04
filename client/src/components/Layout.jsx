@@ -17,7 +17,7 @@ const Layout = ({
   const resolvedTitle = useMemo(() => title || roleLabel || 'Dashboard', [title, roleLabel]);
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-slate-100">
+    <div className="flex min-h-screen bg-slate-50/80 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <Sidebar
         navItems={navItems}
         brand={brand}
@@ -34,8 +34,8 @@ const Layout = ({
           onLogout={onLogout}
           notifications={notifications}
         />
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-6 dark:bg-slate-950">
-          {children}
+        <main className="relative flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 pb-10">
+          <div className="mx-auto w-full max-w-6xl">{children}</div>
         </main>
       </div>
     </div>

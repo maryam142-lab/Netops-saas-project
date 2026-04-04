@@ -11,8 +11,8 @@ const navLinkClass = ({ isActive }) =>
 const AppLayout = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <header className="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+      <header className="border-b border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/70">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
               NetOps
@@ -21,7 +21,7 @@ const AppLayout = () => {
               Operations Suite
             </h1>
           </div>
-          <nav className="flex items-center gap-6">
+          <nav className="flex flex-wrap items-center gap-4">
             <NavLink to="/login" className={navLinkClass}>
               Login
             </NavLink>
@@ -41,8 +41,8 @@ const AppLayout = () => {
       <main className="mx-auto w-full max-w-6xl px-6 py-10">
         <Outlet />
       </main>
-      <footer className="border-t border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 text-xs text-slate-400">
+      <footer className="border-t border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/70">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4 text-xs text-slate-400">
           <span>NetOps SaaS starter</span>
           <span>Ship reliable operations</span>
         </div>

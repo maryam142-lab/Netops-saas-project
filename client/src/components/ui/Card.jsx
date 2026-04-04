@@ -7,7 +7,7 @@ const Card = ({ className = '', children }) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
-      className={`rounded-xl bg-white p-6 shadow ${className}`}
+      className={`surface-card p-6 ${className}`}
     >
       {children}
     </motion.div>

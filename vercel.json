@@ -3,11 +3,6 @@
   "installCommand": "npm install --prefix client && npm install --prefix api",
   "buildCommand": "npm run build --prefix client",
   "outputDirectory": "client/dist",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "crons": [
     {
       "path": "/api/cron/monthly-billing",
